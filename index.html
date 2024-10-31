@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PKCE Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script>
+      function generateRandomString(length) {
+        let result = "";
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        return result;
+      }
+
+      function generateCodeVerifier() {
+        generateState();
+        var code_verifier = generateRandomString(128);
+        document.getElementById("code_verifier").innerHTML = code_verifier;
+        document.getElementById("code_challenge").innerHTML = "";
+      }
+
+      function generateState() {
+        var state = generateRandomString(40);
+        document.getElementById("state").innerHTML = state;
+      }
+      function base64URL(string) {
+        return string.toString(CryptoJS.enc.Base64).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+      }
+      function generateCodeChallenge() {
+        var code_verifier = document.getElementById("code_verifier").innerHTML;
+        if (code_verifier != "") {
+          var code_challenge = base64URL(CryptoJS.SHA256(code_verifier));
+          document.getElementById("code_challenge").innerHTML = code_challenge;
+        }
+      }
+    </script>
+
+    <style>
+      .field {
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="hero is-primary">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">PKCE Generator</h1>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="box">
+          <div class="field">
+            <label class="label">State</label>
+            <div id="state"></div>
+          </div>
+
+          <div class="field">
+            <label class="label">Code Verifier</label>
+            <div id="code_verifier"></div>
+          </div>
+          <div class="field">
+            <label class="label">Code Challenge</label>
+            <div id="code_challenge"></div>
+          </div>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <button class="button is-link" onclick="generateCodeVerifier()">
+                  Generate Code Verifier
+                </button>
+              </div>
+              <div class="level-item">
+                <button class="button is-link" onclick="generateCodeChallenge()">
+                  Generate Code Challange
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
